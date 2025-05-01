@@ -10,6 +10,7 @@
   };
 
   outputs = {
+    self,
     nixpkgs,
     wxGTK30,
     ...
@@ -98,9 +99,18 @@
       default = packages.${system}.safesignidentityclient;
     };
 
+    defaultPackage = self.packages.${system}.safesignidentityclient;
+
+    apps = {
+      tokenadmin = {
+        type = "app";
+        program = "${self.defaultPackage}/usr/bin/tokenadmin";
+      };
+    };
+
     nixosModules = {
       config = {
-        environment.systemPackages = [ packages.${system}.default ];
+        environment.systemPackages = [ self.packages.${system}.default ];
       };
     };
   };
