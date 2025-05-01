@@ -99,7 +99,7 @@
       default = packages.${system}.safesignidentityclient;
     };
 
-    defaultPackage = self.packages.${system}.safesignidentityclient;
+    defaultPackage.${system} = self.packages.${system}.safesignidentityclient;
 
     apps.${system} = {
       tokenadmin = {
@@ -110,7 +110,7 @@
 
     nixosModules.${system} = {
       config = {
-        environment.systemPackages = [ self.packages.${system}.default ];
+        environment.systemPackages = [ self.defaultPackage.${system} ];
       };
     };
   };
