@@ -101,14 +101,14 @@
 
     defaultPackage = self.packages.${system}.safesignidentityclient;
 
-    apps = {
+    apps.${system} = {
       tokenadmin = {
         type = "app";
         program = "${self.defaultPackage}/usr/bin/tokenadmin";
       };
     };
 
-    nixosModules = {
+    nixosModules.${system} = {
       config = {
         environment.systemPackages = [ self.packages.${system}.default ];
       };
