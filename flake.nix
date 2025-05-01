@@ -3,7 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    wxGTK30.url = ./wxGTK30;
+    wxGTK30 = {
+      url = ./wxGTK30;
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -23,11 +26,39 @@
     };
     lib = pkgs.lib;
     stdenv = pkgs.stdenv;
+    runtimeDependencies = [
+      "/usr/bin/tokenadmin"
+    ];
+    # Dependências de runtime
+    buildInputs = with pkgs; [
+      gcc
+      glib
+      glibc
+      hicolor-icon-theme
+      pcsclite
+      cairo
+      pango
+      gdk-pixbuf
+      at-spi2-core
+      gtk3
+      wxGTK30.packages.${system}.default
+      openssl
+      gdbm
+      ccid
+      acsccid
+      scmccid
+    ];
   in rec {
     formatter.${system} = pkgs.alejandra;
 
     packages.${system} = {
-      safesignidentityclient = stdenv.mkDerivation (finalAttrs: rec {
+      safesignidentityclient = stdenv.mkDerivation rec {
+        inherit buildInputs;
+
+        # Indica para o autoPatchelfHook que o executável principal pode abrir
+        # shared objects em tempo de execução
+        inherit runtimeDependencies;
+
         pname = "safesignidentityclient";
         version = "4.0.0.0";
 
@@ -36,36 +67,11 @@
           hash = "sha256-L8KeDl38PmLTauSfMiXHIc6ad2Lso3ZfsydCvBcibfg=";
         };
 
-        unpackCmd = ''
-          dpkg -x $curSrc source
-        '';
-
         # Dependências de buildtime
         nativeBuildInputs = with pkgs; [
-          unzip
           dpkg
           autoPatchelfHook
           wrapGAppsHook3
-        ];
-
-        # Dependências de runtime
-        buildInputs = with pkgs; [
-          gcc
-          glib
-          glibc
-          hicolor-icon-theme
-          pcsclite
-          cairo
-          pango
-          gdk-pixbuf
-          at-spi2-core
-          gtk3
-          wxGTK30.packages.${system}.default
-          openssl
-          gdbm
-          ccid
-          acsccid
-          scmccid
         ];
 
         installPhase = ''
@@ -90,7 +96,7 @@
           mainProgram = "safesignidentityclient";
           sourceProvenance = with lib.sourceTypes; [binaryNativeCode];
         };
-      });
+      };
 
       default = packages.${system}.safesignidentityclient;
     };
