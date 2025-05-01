@@ -97,5 +97,11 @@
 
       default = packages.${system}.safesignidentityclient;
     };
+
+    nixosModules = {
+      config = {
+        environment.systemPackages = [ packages.${system}.default ];
+      };
+    };
   };
 }
