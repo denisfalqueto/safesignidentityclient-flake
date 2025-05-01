@@ -78,10 +78,7 @@
           runHook preInstall
 
           install -d $out/usr
-          cp -R usr/{bin,share} $out/usr/
-
-          install -d $out/usr/lib
-          cp -R usr/lib/. $out/usr/lib/
+          cp -R usr/{bin,share,lib} $out/usr/
 
           install -d $out/usr/share/licenses/${pname}
           install -m 644 usr/share/doc/${pname}/copyright $out/usr/share/licenses/${pname}/copyright
