@@ -31,7 +31,7 @@
         lib = pkgs.lib;
         stdenv = pkgs.stdenv;
         runtimeDependencies = [
-          "/usr/bin/tokenadmin"
+          self
         ];
         # Dependências de runtime
         buildInputs = with pkgs; [
@@ -88,6 +88,16 @@
               install -m 644 usr/share/doc/${pname}/copyright $out/usr/share/licenses/${pname}/copyright
 
               runHook postInstall
+            '';
+
+            postFixup = ''
+              echo "corrigindo tokenadmin"
+              for l in $out/usr/lib/*.so; do
+                patchelf \
+                    --set-interpreter "${stdenv.cc.bintools.dynamicLinker}" \
+                    --add-needed $(basename $l) \
+                    $out/usr/bin/tokenadmin
+              done
             '';
 
             meta = {
