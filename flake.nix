@@ -52,7 +52,7 @@
           acsccid
           scmccid
         ];
-      in rec {
+      in {
         formatter = pkgs.alejandra;
 
         packages = {
@@ -108,8 +108,6 @@
               sourceProvenance = with lib.sourceTypes; [binaryNativeCode];
             };
           };
-
-          default = self.packages.${system}.safesignidentityclient;
         };
 
         defaultPackage = self.packages.${system}.safesignidentityclient;
@@ -124,6 +122,7 @@
         nixosModules = {
           config = {
             environment.systemPackages = [self.defaultPackage.${system}];
+            services.pcscd.enable = true;
           };
         };
       }
