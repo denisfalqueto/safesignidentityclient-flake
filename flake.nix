@@ -87,6 +87,10 @@
               install -d $out/usr/share/licenses/${pname}
               install -m 644 usr/share/doc/${pname}/copyright $out/usr/share/licenses/${pname}/copyright
 
+              # Binary files must be put in $out/bin
+              install -d $out/bin
+              ln -s $out/usr/bin/tokenadmin $out/bin/tokenadmin
+
               runHook postInstall
             '';
 
@@ -115,7 +119,7 @@
         apps = {
           tokenadmin = {
             type = "app";
-            program = "${self.defaultPackage}/usr/bin/tokenadmin";
+            program = "${self.defaultPackage}/bin/tokenadmin";
           };
         };
 
